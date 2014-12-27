@@ -72,51 +72,46 @@
 </template>
 
 <template name="newtonForm">
-    <form class="form-horizontal">
+    <form id="newtonForm" class="form-horizontal newtonForm">
         <fieldset>
-            <legend>Legend</legend>
+            <legend>Newtons Method</legend>
             <div class="form-group">
-                <label for="inputEmail" class="col-lg-2 control-label">Email</label>
-                <div class="col-lg-10">
-                    <input type="text" class="form-control" id="inputEmail" placeholder="Email">
+                <label for="inputFunction" class="col-lg-3 control-label">Function:</label>
+                <div class="col-lg-9">
+                    <input type="text" class="form-control" id= 'inputFunction' placeholder="x^2">
                 </div>
             </div>
             <div class="form-group">
-                <label for="inputPassword" class="col-lg-2 control-label">Password</label>
-                <div class="col-lg-10">
-                    <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox"> Checkbox
-                        </label>
-                    </div>
+                <label for="inputGuess" class="col-lg-3 control-label">Init Guess</label>
+                <div class="col-lg-9">
+                    <input type="text" class="form-control" id="inputGuess" placeholder="1">
                 </div>
             </div>
             <div class="form-group">
-                <label for="textArea" class="col-lg-2 control-label">Textarea</label>
-                <div class="col-lg-10">
+                <label for="textArea" class="col-lg-3 control-label">Textarea</label>
+                <div class="col-lg-9">
                     <textarea class="form-control" rows="3" id="textArea"></textarea>
                     <span class="help-block">A longer block of help text that breaks onto a new line and may extend beyond one line.</span>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-lg-2 control-label">Radios</label>
-                <div class="col-lg-10">
+                <label class="col-lg-3 control-label">Radios</label>
+                <div class="col-lg-9">
                     <div class="radio">
                         <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked=""> Option one is this
+                            <input type="radio" id="optionsRadios1" value="option1" checked=""> Option one is this
                         </label>
                     </div>
                     <div class="radio">
                         <label>
-                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2"> Option two can be something else
+                            <input type="radio" id="optionsRadios2" value="option2"> Option two can be something else
                         </label>
                     </div>
                 </div>
             </div>
             <div class="form-group">
-                <label for="select" class="col-lg-2 control-label">Selects</label>
-                <div class="col-lg-10">
+                <label for="select" class="col-lg-3 control-label">Selects</label>
+                <div class="col-lg-9">
                     <select class="form-control" id="select">
                         <option>1</option>
                         <option>2</option>
@@ -135,8 +130,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-lg-10 col-lg-offset-2">
-                    <button class="btn btn-default">Cancel</button>
+                <div class="col-lg-9 col-lg-offset-3">
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </div>
