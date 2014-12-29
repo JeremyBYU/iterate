@@ -1,5 +1,6 @@
 <head>
-    <title>iterate</title>
+    <title>Iterate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
@@ -51,7 +52,7 @@
         </div>
         <div class="col-lg-7">
             <div class="well bs-component">
-                
+                {{> newtonChart}}
             </div>
         </div>
 
@@ -76,7 +77,7 @@
         <fieldset>
             <legend>Newtons Method</legend>
             <div class="form-group">
-                <label for="inputFunction" class="col-lg-3 control-label">Function:</label>
+                <label for="inputFunction" class="col-lg-3 control-label">Function</label>
                 <div class="col-lg-9">
                     <input type="text" class="form-control" id= 'inputFunction' placeholder="x^2">
                 </div>
@@ -88,10 +89,9 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="textArea" class="col-lg-3 control-label">Textarea</label>
+                <label for="inputIterations" class="col-lg-3 control-label">Iterations</label>
                 <div class="col-lg-9">
-                    <textarea class="form-control" rows="3" id="textArea"></textarea>
-                    <span class="help-block">A longer block of help text that breaks onto a new line and may extend beyond one line.</span>
+                    <input type="text" class="form-control" id="inputIterations" placeholder="1">
                 </div>
             </div>
             <div class="form-group">
@@ -138,4 +138,8 @@
     </form>
 
 
+</template>
+
+<template name="newtonChart">
+	<div id="newtonChart" style="height: 300px"></div>
 </template>
