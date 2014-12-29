@@ -45,12 +45,12 @@
                 {{#each myFuncs}} {{> myfunc}} {{/each}}
             </ul>
         </div>
-        <div class="col-lg-5">
+        <div class="col-sm-5">
             <div class="well bs-component">
                 {{> newtonForm}}
             </div>
         </div>
-        <div class="col-lg-7">
+        <div class="col-sm-7">
             <div class="well bs-component">
                 {{> newtonChart}}
             </div>
@@ -79,7 +79,7 @@
             <div class="form-group">
                 <label for="inputFunction" class="col-lg-3 control-label">Function</label>
                 <div class="col-lg-9">
-                    <input type="text" class="form-control" id= 'inputFunction' placeholder="x^2">
+                    <input type="text" class="form-control" id='inputFunction' placeholder="x^2">
                 </div>
             </div>
             <div class="form-group">
@@ -92,6 +92,16 @@
                 <label for="inputIterations" class="col-lg-3 control-label">Iterations</label>
                 <div class="col-lg-9">
                     <input type="text" class="form-control" id="inputIterations" placeholder="1">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputRangeLow" class="col-xs-2 control-label">Min</label>
+                <div class="col-xs-4">
+                    <input type="text" class="form-control" id="inputRangeLow" placeholder="0">
+                </div>
+                <label for="inputRangeHi" class="col-xs-2 control-label">Max</label>
+                <div class="col-xs-4">
+                    <input type="text" class="form-control" id="inputRangeHi" placeholder="0">
                 </div>
             </div>
             <div class="form-group">
@@ -141,5 +151,5 @@
 </template>
 
 <template name="newtonChart">
-	<div id="newtonChart" style="height: 300px"></div>
+    <div id="newtonChart" style="height: 300px"></div>
 </template>

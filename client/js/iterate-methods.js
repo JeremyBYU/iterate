@@ -1,10 +1,14 @@
 newtonChart = null;
-global_config = 
-{
-	chart_resolution : 100,
-	init_func : 'x^2',
-	init_func_range : {min:0,max:100},
-	init_func_scope : {x:1}
+global_config = {
+    chart_resolution: 100,
+    init_func: 'x^2',
+    init_func_range: {
+        min: 0,
+        max: 100
+    },
+    init_func_scope: {
+        x: 1
+    }
 
 }
 chart_config = {
@@ -33,9 +37,9 @@ chart_config = {
         allowDecimals: false
     },
     yAxis: {
-    	title: {
-			text: null
-    	}
+        title: {
+            text: null
+        }
     }
 
 };
@@ -59,15 +63,18 @@ getNewtonParams = function() {
     var inputFunction = $('.newtonForm').find('#inputFunction').val();
     var inputGuess = $('.newtonForm').find('#inputGuess').val();
     var inputIterations = $('.newtonForm').find('#inputIterations').val();
+    var inputMin = parseFloat($('.newtonForm').find('#inputRangeLow').val());
+    var inputMax = parseFloat($('.newtonForm').find('#inputRangeHi').val());
     //alert(inputGuess);
-    var scope = {
+    var inputScope = {
         x: parseFloat(inputGuess)
     };
 
     newtonParams = {
         func: inputFunction,
-        guess: inputGuess,
-        iter: inputIterations
+        scope: inputScope,
+        iter: inputIterations,
+        func_range: {min: inputMin,max:inputMax}
     };
 
     return newtonParams;
@@ -81,24 +88,44 @@ initChart = function() {
     var init_tooltip = chart_config.tooltip;
 
 
-    var init_data = dataFromFunc(global_config.init_func,global_config.init_func_scope,global_config.init_func_range);
+    var init_data = dataFromFunc(global_config.init_func, global_config.init_func_scope, global_config.init_func_range);
     init_series.data = init_data;
 
 
     newtonChart = $('#newtonChart').highcharts({
-    	xAxis: init_xAxis,
-    	series: [
-    		init_series
-    	],
-    	tooltip: init_tooltip,
-    	yAxis: init_yAxis
+        xAxis: init_xAxis,
+        series: [
+            init_series
+        ],
+        tooltip: init_tooltip,
+        yAxis: init_yAxis
     });
 
 
 }
 constructNewtonChart = function(newtonParams) {
+	$('#newtonChart').highcharts().destroy();
+
+    var init_xAxis = chart_config.xAxis;
+    var init_yAxis = chart_config.yAxis;
+    var init_series = chart_config.new_series;
+    var init_tooltip = chart_config.tooltip;
+
+    var init_data = dataFromFunc(newtonParams.func, newtonParams.scope, newtonParams.func_range);
+    init_series.data = init_data;
+
+    newtonChart = $('#newtonChart').highcharts({
+        xAxis: init_xAxis,
+        series: [
+            init_series
+        ],
+        tooltip: init_tooltip,
+        yAxis: init_yAxis
+    });
 
 
+}
+newtonAnimate = function(chart) {
 
 
 
@@ -115,13 +142,13 @@ fprime = function(f, scope) {
 
 }
 dataFromFunc = function(f, scope, range) {
-	var dx = (range.max - range.min)/global_config.chart_resolution;
+    var dx = (range.max - range.min) / global_config.chart_resolution;
     var data = _.range(global_config.chart_resolution).map(function(num) {
-		var new_x = range.min + num*dx;
-		scope.x = new_x;
-		new_y = math.eval(f,scope);
+        var new_x = range.min + num * dx;
+        scope.x = new_x;
+        new_y = math.eval(f, scope);
 
-        return [new_x,new_y];
+        return [new_x, new_y];
     });
 
     return data;
