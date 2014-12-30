@@ -31,7 +31,7 @@ chart_config = {
     tooltip: {
         pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>({point.x},{point.y})</b> ({point.change}%)<br/>',
         changeDecimals: 0,
-        valueDecimals: 2
+        valueDecimals: 1
     },
     xAxis: {
         allowDecimals: false
@@ -42,10 +42,10 @@ chart_config = {
         }
     },
     chart: {
-    	zoomType: "xy"
+        zoomType: "xy"
     }
 };
-
+newtonParams = {};
 
 
 init = function() {
@@ -61,7 +61,6 @@ init = function() {
 
 };
 getNewtonParams = function() {
-    var newtonParams = {};
     var inputFunction = $('.newtonForm').find('#inputFunction').val();
     var inputGuess = parseFloat($('.newtonForm').find('#inputGuess').val());
     var inputIterations = $('.newtonForm').find('#inputIterations').val();
@@ -73,14 +72,17 @@ getNewtonParams = function() {
     };
 
     newtonParams = {
-    	x0: inputGuess,
+        x0: inputGuess,
         func: inputFunction,
         scope: inputScope,
         iter: inputIterations,
-        func_range: {min: inputMin,max:inputMax}
+        func_range: {
+            min: inputMin,
+            max: inputMax
+        }
     };
 
-    return newtonParams;
+    
 
 
 }
@@ -109,18 +111,16 @@ initChart = function() {
 
 
 
-
-
 }
-constructNewtonChart = function(newtonParams) {
-	newtonChart.destroy();
+constructNewtonChart = function() {
+    newtonChart.destroy();
 
     var init_xAxis = chart_config.xAxis;
     var init_yAxis = chart_config.yAxis;
     var init_series = chart_config.new_series;
     var init_tooltip = chart_config.tooltip;
     var init_chart = chart_config.chart;
-    
+
     var init_data = dataFromFunc(newtonParams.func, newtonParams.scope, newtonParams.func_range);
     init_series.data = init_data;
 
@@ -135,31 +135,82 @@ constructNewtonChart = function(newtonParams) {
     });
     newtonChart = $('#newtonChart').highcharts();
 
-
-    x0 = createPointSeries(0,[newtonParams.x0,0]);
+    x0 = createPointSeries(0, [newtonParams.x0, 0]); //Add First x0 guess
     newtonChart.addSeries(x0);
+
+    Session.setDefault("currIter", 0); //The current iteration, x0, x1, etc
+    Session.setDefault("currIterStep", 0); //The animation step within the iteration.
+    Session.setDefault("currX",newtonParams.x0);
+
 
 }
 newtonAnimate = function(chart) {
-	var stepsPerIter = 3;
+    var stepsPerIter = 3;
+    //the only state you need is your current x0, if all you care about is the iteration cycle
+    //but if i want to know about which step im in the iteration cycle
+    //Session.set("newtonAnimateStep") = 
+    var currIter = Session.get("currIter");
+    var currIterStep = Session.get("currIterStep");
+    var currX = Session.get("currX");
+    switch (currIterStep) {
+        case 0: //create vertical line
+        	var newY = math.eval(newtonParams.func,{x:currX})
+        	chart.addSeries(createVertLineSeries(currIter,[[currX,0],[currX,newY]]))
+        	Session.set("currIterStep", 1);
+            break;
+        case 1: //create create slope
+         	var startY = math.eval(newtonParams.func,{x:currX})
+         	var startX = currX;
 
-	//Session.set("newtonAnimateStep") = 
+         	deriv_startX = fprime(newtonParams.func,{x:currX});
+         	var endX = currX - (startY / deriv_startX);
+         	var endY = 0;
+
+        	chart.addSeries(createVertLineSeries(currIter,[[startX,startY],[endX,endY]]))
+        	Session.set("currIterStep", 2);       	
+
+            break;
+        case 2: //create new iter point, update iteration
 
 
+            break;
+        default:
+            //log error??
+            break;
+    }
 
+
+    
+
+    // 
 }
-createPointSeries = function(xnum,point){
-	var x0 = chart_config.new_series;
+createPointSeries = function(xnum, point) {
+    var x0 = chart_config.new_series;
     x0.data = [point];
     x0.name = 'x' + xnum;
     x0.enableMouseTracking = true;
     x0.type = 'scatter';
     x0.marker = {
-            enabled: true
-        };
-    x0.showInLegend=  true;
+        enabled: true
+    };
+    x0.showInLegend = true;
     x0.color = "#000";
     return x0;
+}
+createVertLineSeries = function(xnum, line) {
+    var series = chart_config.new_series;
+    series.data = line;
+    series.name = 'x' + xnum + 'vert_line';
+    series.enableMouseTracking = false;
+    series.type = 'line';
+    series.marker = {
+        enabled: false
+    };
+    series.dashStyle = 'shortDash';
+    series.showInLegend = false;
+    series.color = "#000";
+    return series;
+
 }
 
 fprime = function(f, scope) {
