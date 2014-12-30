@@ -40,8 +40,10 @@ chart_config = {
         title: {
             text: null
         }
+    },
+    chart: {
+    	zoomType: "xy"
     }
-
 };
 
 
@@ -61,7 +63,7 @@ init = function() {
 getNewtonParams = function() {
     var newtonParams = {};
     var inputFunction = $('.newtonForm').find('#inputFunction').val();
-    var inputGuess = $('.newtonForm').find('#inputGuess').val();
+    var inputGuess = parseFloat($('.newtonForm').find('#inputGuess').val());
     var inputIterations = $('.newtonForm').find('#inputIterations').val();
     var inputMin = parseFloat($('.newtonForm').find('#inputRangeLow').val());
     var inputMax = parseFloat($('.newtonForm').find('#inputRangeHi').val());
@@ -71,6 +73,7 @@ getNewtonParams = function() {
     };
 
     newtonParams = {
+    	x0: inputGuess,
         func: inputFunction,
         scope: inputScope,
         iter: inputIterations,
@@ -86,7 +89,7 @@ initChart = function() {
     var init_yAxis = chart_config.yAxis;
     var init_series = chart_config.new_series;
     var init_tooltip = chart_config.tooltip;
-
+    var init_chart = chart_config.chart;
 
     var init_data = dataFromFunc(global_config.init_func, global_config.init_func_scope, global_config.init_func_range);
     init_series.data = init_data;
@@ -98,19 +101,26 @@ initChart = function() {
             init_series
         ],
         tooltip: init_tooltip,
-        yAxis: init_yAxis
+        yAxis: init_yAxis,
+        chart: init_chart
     });
+    newtonChart = $('#newtonChart').highcharts();
+
+
+
+
 
 
 }
 constructNewtonChart = function(newtonParams) {
-	$('#newtonChart').highcharts().destroy();
+	newtonChart.destroy();
 
     var init_xAxis = chart_config.xAxis;
     var init_yAxis = chart_config.yAxis;
     var init_series = chart_config.new_series;
     var init_tooltip = chart_config.tooltip;
-
+    var init_chart = chart_config.chart;
+    
     var init_data = dataFromFunc(newtonParams.func, newtonParams.scope, newtonParams.func_range);
     init_series.data = init_data;
 
@@ -120,15 +130,36 @@ constructNewtonChart = function(newtonParams) {
             init_series
         ],
         tooltip: init_tooltip,
-        yAxis: init_yAxis
+        yAxis: init_yAxis,
+        chart: init_chart
     });
+    newtonChart = $('#newtonChart').highcharts();
 
+
+    x0 = createPointSeries(0,[newtonParams.x0,0]);
+    newtonChart.addSeries(x0);
 
 }
 newtonAnimate = function(chart) {
+	var stepsPerIter = 3;
+
+	//Session.set("newtonAnimateStep") = 
 
 
 
+}
+createPointSeries = function(xnum,point){
+	var x0 = chart_config.new_series;
+    x0.data = [point];
+    x0.name = 'x' + xnum;
+    x0.enableMouseTracking = true;
+    x0.type = 'scatter';
+    x0.marker = {
+            enabled: true
+        };
+    x0.showInLegend=  true;
+    x0.color = "#000";
+    return x0;
 }
 
 fprime = function(f, scope) {
