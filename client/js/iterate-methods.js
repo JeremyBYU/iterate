@@ -26,10 +26,15 @@ chart_config = {
 
 
 
-
+    },
+    title: {
+        text: 'Newtons Method'
+    },
+    subtitle: {
+        text: ''
     },
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>({point.x},{point.y})</b> ({point.change}%)<br/>',
+        pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>({point.x:.2f},{point.y:.2f})</b><br/>',
         changeDecimals: 0,
         valueDecimals: 1
     },
@@ -82,16 +87,18 @@ getNewtonParams = function() {
         }
     };
 
-    
+
 
 
 }
 initChart = function() {
-    var init_xAxis = chart_config.xAxis;
-    var init_yAxis = chart_config.yAxis;
-    var init_series = chart_config.new_series;
-    var init_tooltip = chart_config.tooltip;
-    var init_chart = chart_config.chart;
+    var copy_chart_config = $.extend(true, {}, chart_config);
+    var init_xAxis = copy_chart_config.xAxis;
+    var init_yAxis = copy_chart_config.yAxis;
+    var init_series = copy_chart_config.new_series;
+    var init_tooltip = copy_chart_config.tooltip;
+    var init_chart = copy_chart_config.chart;
+    var init_title = copy_chart_config.title;
 
     var init_data = dataFromFunc(global_config.init_func, global_config.init_func_scope, global_config.init_func_range);
     init_series.data = init_data;
@@ -104,7 +111,8 @@ initChart = function() {
         ],
         tooltip: init_tooltip,
         yAxis: init_yAxis,
-        chart: init_chart
+        chart: init_chart,
+        title: init_title
     });
     newtonChart = $('#newtonChart').highcharts();
 
@@ -115,11 +123,13 @@ initChart = function() {
 constructNewtonChart = function() {
     newtonChart.destroy();
 
-    var init_xAxis = chart_config.xAxis;
-    var init_yAxis = chart_config.yAxis;
-    var init_series = chart_config.new_series;
-    var init_tooltip = chart_config.tooltip;
-    var init_chart = chart_config.chart;
+    var copy_chart_config = $.extend(true, {}, chart_config);
+    var init_xAxis = copy_chart_config.xAxis;
+    var init_yAxis = copy_chart_config.yAxis;
+    var init_series = copy_chart_config.new_series;
+    var init_tooltip = copy_chart_config.tooltip;
+    var init_chart = copy_chart_config.chart;
+    var init_title = copy_chart_config.title;
 
     var init_data = dataFromFunc(newtonParams.func, newtonParams.scope, newtonParams.func_range);
     init_series.data = init_data;
@@ -131,16 +141,18 @@ constructNewtonChart = function() {
         ],
         tooltip: init_tooltip,
         yAxis: init_yAxis,
-        chart: init_chart
+        chart: init_chart,
+        title: init_title
     });
     newtonChart = $('#newtonChart').highcharts();
 
     x0 = createPointSeries(0, [newtonParams.x0, 0]); //Add First x0 guess
     newtonChart.addSeries(x0);
 
-    Session.setDefault("currIter", 0); //The current iteration, x0, x1, etc
-    Session.setDefault("currIterStep", 0); //The animation step within the iteration.
-    Session.setDefault("currX",newtonParams.x0);
+    Session.set("currIter", 0); //The current iteration, x0, x1, etc
+    Session.set("currIterStep", 0); //The animation step within the iteration.
+    Session.set("currX", newtonParams.x0); //The value of x at the current iteration
+    Session.set("nextX", newtonParams.x0);
 
 
 }
@@ -154,38 +166,59 @@ newtonAnimate = function(chart) {
     var currX = Session.get("currX");
     switch (currIterStep) {
         case 0: //create vertical line
-        	var newY = math.eval(newtonParams.func,{x:currX})
-        	chart.addSeries(createVertLineSeries(currIter,[[currX,0],[currX,newY]]))
-        	Session.set("currIterStep", 1);
+            var newY = math.eval(newtonParams.func, {
+                x: currX
+            })
+            chart.addSeries(createLineSeries(currIter, [
+                [currX, 0],
+                [currX, newY]
+            ]))
+            Session.set("currIterStep", 1);
             break;
         case 1: //create create slope
-         	var startY = math.eval(newtonParams.func,{x:currX})
-         	var startX = currX;
+            var startY = math.eval(newtonParams.func, {
+                x: currX
+            })
+            var startX = currX;
 
-         	deriv_startX = fprime(newtonParams.func,{x:currX});
-         	var endX = currX - (startY / deriv_startX);
-         	var endY = 0;
+            deriv_startX = fprime(newtonParams.func, {
+                x: currX
+            });
+            var endX = currX - (startY / deriv_startX);
+            var endY = 0;
 
-        	chart.addSeries(createVertLineSeries(currIter,[[startX,startY],[endX,endY]]))
-        	Session.set("currIterStep", 2);       	
+            chart.addSeries(createLineSeries(currIter, [
+                [startX, startY],
+                [endX, endY]
+            ]))
+            Session.set("currIterStep", 2);
+            Session.set("nextX", endX);
 
             break;
         case 2: //create new iter point, update iteration
+            var currX = Session.get('nextX');
+            var currY = 0;
 
+            currIter = Session.get('currIter') + 1;
+            chart.addSeries(createPointSeries(currIter, [currX, currY]));
 
+            Session.set('currX', currX);
+            Session.set("currIterStep", 0);
+            Session.set('currIter', currIter);
             break;
+
         default:
             //log error??
             break;
     }
 
 
-    
+
 
     // 
 }
 createPointSeries = function(xnum, point) {
-    var x0 = chart_config.new_series;
+    var x0 = $.extend(true, {}, chart_config.new_series);
     x0.data = [point];
     x0.name = 'x' + xnum;
     x0.enableMouseTracking = true;
@@ -197,10 +230,10 @@ createPointSeries = function(xnum, point) {
     x0.color = "#000";
     return x0;
 }
-createVertLineSeries = function(xnum, line) {
-    var series = chart_config.new_series;
+createLineSeries = function(xnum, line) {
+    var series = $.extend(true, {}, chart_config.new_series);
     series.data = line;
-    series.name = 'x' + xnum + 'vert_line';
+    series.name = 'x' + xnum + 'line';
     series.enableMouseTracking = false;
     series.type = 'line';
     series.marker = {
