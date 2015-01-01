@@ -22,8 +22,8 @@ chart_config = {
         marker: {
             enabled: false
         },
-        showInLegend: true,
-        enableMouseTracking: false
+        showInLegend: true
+
 
 
 
@@ -96,7 +96,7 @@ getNewtonParams = function() {
 
 
 
-}
+};
 initChart = function() {
     var copy_chart_config = $.extend(true, {}, chart_config);
     var init_xAxis = copy_chart_config.xAxis;
@@ -106,8 +106,7 @@ initChart = function() {
     var init_chart = copy_chart_config.chart;
     var init_title = copy_chart_config.title;
 
-    var init_data = dataFromFunc(global_config.init_func, global_config.init_func_scope, global_config.init_func_range);
-    init_series.data = init_data;
+    init_series.data = dataFromFunc(global_config.init_func, global_config.init_func_scope, global_config.init_func_range);
 
 
     newtonChart = $('#newtonChart').highcharts({
@@ -125,7 +124,7 @@ initChart = function() {
 
 
 
-}
+};
 constructNewtonChart = function() {
     newtonChart.destroy();
 
@@ -163,7 +162,7 @@ constructNewtonChart = function() {
     Session.set("newtonIsCreated", true);  //varaible to know if newton chart has been created.
 
 
-}
+};
 newtonAnimate = function(chart) {
     var stepsPerIter = 3;
     //the only state you need is your current x0, if all you care about is the iteration cycle
@@ -235,11 +234,11 @@ newtonAnimate = function(chart) {
     return true;
 
     // 
-}
+};
 clearChartExcept = function(chart, num) {
     while (chart.series.length > num)
         chart.series[chart.series.length - 1].remove(true);
-}
+};
 createPointSeries = function(xnum, point) {
     var x0 = $.extend(true, {}, chart_config.new_series);
     x0.data = [point];
@@ -252,7 +251,7 @@ createPointSeries = function(xnum, point) {
     x0.showInLegend = true;
     x0.color = "#000";
     return x0;
-}
+};
 createLineSeries = function(xnum, line) {
     var series = $.extend(true, {}, chart_config.new_series);
     series.data = line;
@@ -267,7 +266,7 @@ createLineSeries = function(xnum, line) {
     series.color = "#000";
     return series;
 
-}
+};
 
 fprime = function(f, scope) {
     var dx = 1e-10 //smallest number possible in javascript while keeping precision. Going smaller just causing rounding errors.
@@ -278,7 +277,7 @@ fprime = function(f, scope) {
     var slope = dy / dx;
     return slope;
 
-}
+};
 dataFromFunc = function(f, scope, range) {
     var dx = (range.max - range.min) / global_config.chart_resolution;
     var data = _.range(global_config.chart_resolution).map(function(num) {
@@ -291,4 +290,4 @@ dataFromFunc = function(f, scope, range) {
 
     return data;
 
-}
+};
