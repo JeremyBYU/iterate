@@ -8,7 +8,8 @@ global_config = {
     },
     init_func_scope: {
         x: 1
-    }
+    },
+    animationTime: 1000
 
 }
 chart_config = {
@@ -62,7 +63,9 @@ init = function() {
 
     });
     initChart();
-
+    $(".btn").mouseup(function() {
+        $(this).blur();
+    })
 
 };
 getNewtonParams = function() {
@@ -133,6 +136,7 @@ constructNewtonChart = function() {
 
     var init_data = dataFromFunc(newtonParams.func, newtonParams.scope, newtonParams.func_range);
     init_series.data = init_data;
+    init_series.name = newtonParams.func;
 
     newtonChart = $('#newtonChart').highcharts({
         xAxis: init_xAxis,
@@ -153,6 +157,7 @@ constructNewtonChart = function() {
     Session.set("currIterStep", 0); //The animation step within the iteration.
     Session.set("currX", newtonParams.x0); //The value of x at the current iteration
     Session.set("nextX", newtonParams.x0);
+    Session.set("newtonIsCreated", true);
 
 
 }
@@ -164,6 +169,18 @@ newtonAnimate = function(chart) {
     var currIter = Session.get("currIter");
     var currIterStep = Session.get("currIterStep");
     var currX = Session.get("currX");
+
+    //alert('newtonParams.iter ' + newtonParams.iter);
+    if (currIter >= newtonParams.iter) {
+        //alert('curr Iter >= newtonParams.iter');
+        //return false; //reached our max iterations, return false to stop the animation.
+        clearChartExcept(newtonChart, 2);
+        Session.set("currIter", 0); //The current iteration, x0, x1, etc
+        Session.set("currIterStep", 0); //The animation step within the iteration.
+        Session.set("currX", newtonParams.x0); //The value of x at the current iteration
+        Session.set("nextX", newtonParams.x0);
+    	return true;
+    }
     switch (currIterStep) {
         case 0: //create vertical line
             var newY = math.eval(newtonParams.func, {
@@ -211,11 +228,13 @@ newtonAnimate = function(chart) {
             //log error??
             break;
     }
-
-
-
+    return true;
 
     // 
+}
+clearChartExcept = function(chart, num) {
+    while (chart.series.length > num)
+        chart.series[chart.series.length - 1].remove(true);
 }
 createPointSeries = function(xnum, point) {
     var x0 = $.extend(true, {}, chart_config.new_series);
