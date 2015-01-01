@@ -63,6 +63,7 @@ init = function() {
 
     });
     initChart();
+    //clear button foucus on click
     $(".btn").mouseup(function() {
         $(this).blur();
     })
@@ -74,6 +75,8 @@ getNewtonParams = function() {
     var inputIterations = $('.newtonForm').find('#inputIterations').val();
     var inputMin = parseFloat($('.newtonForm').find('#inputRangeLow').val());
     var inputMax = parseFloat($('.newtonForm').find('#inputRangeHi').val());
+
+    //need to perform validation......
     //alert(inputGuess);
     var inputScope = {
         x: parseFloat(inputGuess)
@@ -156,8 +159,8 @@ constructNewtonChart = function() {
     Session.set("currIter", 0); //The current iteration, x0, x1, etc
     Session.set("currIterStep", 0); //The animation step within the iteration.
     Session.set("currX", newtonParams.x0); //The value of x at the current iteration
-    Session.set("nextX", newtonParams.x0);
-    Session.set("newtonIsCreated", true);
+    Session.set("nextX", newtonParams.x0); //The value of x at the next Iteration
+    Session.set("newtonIsCreated", true);  //varaible to know if newton chart has been created.
 
 
 }
@@ -174,7 +177,8 @@ newtonAnimate = function(chart) {
     if (currIter >= newtonParams.iter) {
         //alert('curr Iter >= newtonParams.iter');
         //return false; //reached our max iterations, return false to stop the animation.
-        clearChartExcept(newtonChart, 2);
+        clearChartExcept(newtonChart, 2); //clear all the chart except the first two sereis, which are the fucntion and the initial guess
+
         Session.set("currIter", 0); //The current iteration, x0, x1, etc
         Session.set("currIterStep", 0); //The animation step within the iteration.
         Session.set("currX", newtonParams.x0); //The value of x at the current iteration
@@ -192,7 +196,7 @@ newtonAnimate = function(chart) {
             ]))
             Session.set("currIterStep", 1);
             break;
-        case 1: //create create slope
+        case 1: //create slope line
             var startY = math.eval(newtonParams.func, {
                 x: currX
             })
