@@ -11,12 +11,11 @@ global_config = {
     },
     animationTime: 1000
 
-}
+};
 chart_config = {
     new_series: {
         data: [],
         name: global_config.init_func,
-        enableMouseTracking: false,
         type: "line",
         dashStyle: "Solid",
         marker: {
@@ -96,7 +95,7 @@ getNewtonParams = function() {
 
 
 
-}
+};
 initChart = function() {
     var copy_chart_config = $.extend(true, {}, chart_config);
     var init_xAxis = copy_chart_config.xAxis;
@@ -125,7 +124,7 @@ initChart = function() {
 
 
 
-}
+};
 constructNewtonChart = function() {
     newtonChart.destroy();
 
@@ -163,9 +162,8 @@ constructNewtonChart = function() {
     Session.set("newtonIsCreated", true);  //varaible to know if newton chart has been created.
 
 
-}
+};
 newtonAnimate = function(chart) {
-    var stepsPerIter = 3;
     //the only state you need is your current x0, if all you care about is the iteration cycle
     //but if i want to know about which step im in the iteration cycle
     //Session.set("newtonAnimateStep") = 
@@ -189,17 +187,17 @@ newtonAnimate = function(chart) {
         case 0: //create vertical line
             var newY = math.eval(newtonParams.func, {
                 x: currX
-            })
+            });
             chart.addSeries(createLineSeries(currIter, [
                 [currX, 0],
                 [currX, newY]
-            ]))
+            ]));
             Session.set("currIterStep", 1);
             break;
         case 1: //create slope line
             var startY = math.eval(newtonParams.func, {
                 x: currX
-            })
+            });
             var startX = currX;
 
             deriv_startX = fprime(newtonParams.func, {
@@ -211,7 +209,7 @@ newtonAnimate = function(chart) {
             chart.addSeries(createLineSeries(currIter, [
                 [startX, startY],
                 [endX, endY]
-            ]))
+            ]));
             Session.set("currIterStep", 2);
             Session.set("nextX", endX);
 
@@ -235,11 +233,62 @@ newtonAnimate = function(chart) {
     return true;
 
     // 
-}
+};
+newtonReverseAnimate = function(chart) {
+    //the only state you need is your current x0, if all you care about is the iteration cycle
+    //but if i want to know about which step im in the iteration cycle
+    //Session.set("newtonAnimateStep") =
+    var currIter = Session.get("currIter");
+    var currIterStep = Session.get("currIterStep");
+    var currX = Session.get("currX");
+
+    //alert('newtonParams.iter ' + newtonParams.iter);
+    if (currIter <= 0 && currIterStep == 0) {
+        //alert('curr Iter >= newtonParams.iter');
+        //return false; //reached our max iterations, return false to stop the animation.
+         //clear all the chart except the first two sereis, which are the fucntion and the initial guess
+
+        //Cant do anything so just do a return
+
+        return true;
+    }
+    switch (currIterStep) {
+        case 0: //supposed to create vertical line, instead will remove the last point
+
+            Session.set("currIterStep", 2); //reset to last currIterStep
+            Session.set("currIter", currIter - 1); //reset to last currIter
+            //need to get the last X......
+            Session.set("currX",chart.series[chart.series.length - 4].data[0].x);
+            //next X should already be set....
+            Session.set("nextX",chart.series[chart.series.length - 2].data[1].x );
+            chart.series[chart.series.length - 1].remove(true); //remove last series
+            break;
+        case 1: //supposed create slope line, instead will remove the vertical line.
+
+
+            Session.set("currIterStep", 0);
+            chart.series[chart.series.length - 1].remove(true); //remove last series
+
+
+            break;
+        case 2: //supposed to create new iter point, update iteration, instaed will remove the last slope line
+            Session.set("currIterStep", 1);
+            chart.series[chart.series.length - 1].remove(true); //remove last series
+
+            break;
+
+        default:
+            //log error??
+            break;
+    }
+    return true;
+
+    //
+};
 clearChartExcept = function(chart, num) {
     while (chart.series.length > num)
         chart.series[chart.series.length - 1].remove(true);
-}
+};
 createPointSeries = function(xnum, point) {
     var x0 = $.extend(true, {}, chart_config.new_series);
     x0.data = [point];
@@ -252,7 +301,7 @@ createPointSeries = function(xnum, point) {
     x0.showInLegend = true;
     x0.color = "#000";
     return x0;
-}
+};
 createLineSeries = function(xnum, line) {
     var series = $.extend(true, {}, chart_config.new_series);
     series.data = line;
@@ -267,7 +316,7 @@ createLineSeries = function(xnum, line) {
     series.color = "#000";
     return series;
 
-}
+};
 
 fprime = function(f, scope) {
     var dx = 1e-10 //smallest number possible in javascript while keeping precision. Going smaller just causing rounding errors.
@@ -278,7 +327,7 @@ fprime = function(f, scope) {
     var slope = dy / dx;
     return slope;
 
-}
+};
 dataFromFunc = function(f, scope, range) {
     var dx = (range.max - range.min) / global_config.chart_resolution;
     var data = _.range(global_config.chart_resolution).map(function(num) {
@@ -291,4 +340,4 @@ dataFromFunc = function(f, scope, range) {
 
     return data;
 
-}
+};
