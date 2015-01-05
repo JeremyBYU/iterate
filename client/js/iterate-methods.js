@@ -233,7 +233,7 @@ newtonAnimate = function(chart) {
 
     // 
 };
-<<<<<<< HEAD
+
 newtonReverseAnimate = function(chart) {
     //the only state you need is your current x0, if all you care about is the iteration cycle
     //but if i want to know about which step im in the iteration cycle
@@ -285,8 +285,7 @@ newtonReverseAnimate = function(chart) {
 
     //
 };
-=======
->>>>>>> origin/master
+
 clearChartExcept = function(chart, num) {
     while (chart.series.length > num)
         chart.series[chart.series.length - 1].remove(true);
