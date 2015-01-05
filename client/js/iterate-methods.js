@@ -63,6 +63,7 @@ init = function() {
     });
     initChart();
     //clear button foucus on click
+    //
     $(".btn").mouseup(function() {
         $(this).blur();
     })
