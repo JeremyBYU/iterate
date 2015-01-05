@@ -21,8 +21,8 @@ chart_config = {
         marker: {
             enabled: false
         },
-        showInLegend: true,
-        enableMouseTracking: false
+        showInLegend: true
+
 
 
 
@@ -105,8 +105,7 @@ initChart = function() {
     var init_chart = copy_chart_config.chart;
     var init_title = copy_chart_config.title;
 
-    var init_data = dataFromFunc(global_config.init_func, global_config.init_func_scope, global_config.init_func_range);
-    init_series.data = init_data;
+    init_series.data = dataFromFunc(global_config.init_func, global_config.init_func_scope, global_config.init_func_range);
 
 
     newtonChart = $('#newtonChart').highcharts({
@@ -234,6 +233,7 @@ newtonAnimate = function(chart) {
 
     // 
 };
+<<<<<<< HEAD
 newtonReverseAnimate = function(chart) {
     //the only state you need is your current x0, if all you care about is the iteration cycle
     //but if i want to know about which step im in the iteration cycle
@@ -285,6 +285,8 @@ newtonReverseAnimate = function(chart) {
 
     //
 };
+=======
+>>>>>>> origin/master
 clearChartExcept = function(chart, num) {
     while (chart.series.length > num)
         chart.series[chart.series.length - 1].remove(true);
