@@ -21,7 +21,8 @@ chart_config = {
         marker: {
             enabled: false
         },
-        showInLegend: true
+        showInLegend: true,
+        enableMouseTracking: false
 
 
 
@@ -55,12 +56,7 @@ newtonParams = {};
 
 init = function() {
     //alert(math.round(math.e,3));
-    $('#newtonForm').submit(function(event) {
-        // prevent default browser behaviour
-        //event.preventDefault();
-        //do stuff with your form here      
 
-    });
     initChart();
     //clear button foucus on click
     //
@@ -70,16 +66,18 @@ init = function() {
 
 };
 getNewtonParams = function() {
-    var inputFunction = $('.newtonForm').find('#inputFunction').val();
-    var inputGuess = parseFloat($('.newtonForm').find('#inputGuess').val());
-    var inputIterations = $('.newtonForm').find('#inputIterations').val();
-    var inputMin = parseFloat($('.newtonForm').find('#inputRangeLow').val());
-    var inputMax = parseFloat($('.newtonForm').find('#inputRangeHi').val());
+    var newtonForm =  $('.newtonForm');
+    var inputFunction = newtonForm.find('#inputFunction').val();
+    var inputGuess = parseFloat(newtonForm.find('#inputGuess').val());
+    var inputIterations = parseFloat(newtonForm.find('#inputIterations').val());
+
+    var inputMin = parseFloat(newtonForm.find('#inputRangeLow').val());
+    var inputMax = parseFloat(newtonForm.find('#inputRangeHi').val());
 
     //need to perform validation......
     //alert(inputGuess);
     var inputScope = {
-        x: parseFloat(inputGuess)
+        x: inputGuess
     };
 
     newtonParams = {
