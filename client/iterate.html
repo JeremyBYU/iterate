@@ -19,18 +19,16 @@
             <div class="navbar-collapse collapse" id="navbar-main">
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="../help/">Newton Method</a>
+                        <a href="">Newton Method</a>
                     </li>
                     <li>
-                        <a href="../help/">Secant Method</a>
+                        <a href="">Secant Method</a>
                     </li>
 
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="http://builtwithbootstrap.com/" target="_blank">Built With Bootstrap</a>
-                    </li>
-                    <li><a href="https://wrapbootstrap.com/?ref=bsw" target="_blank">WrapBootstrap</a>
+                    <li><a href="/" target="_blank">About</a>
                     </li>
                 </ul>
 
@@ -48,9 +46,9 @@
             <div class="well bs-component">
                 {{> newtonChart}}
                 <div style="padding-top:5px" class="text-center">
-                	
-                {{> chartControl previous_iter_id="newtonPrev" play_id="newtonPlay" pause_id="newtonPause" next_iter_id="newtonNext"}}
-                	
+
+                    {{> chartControl previous_iter_id="newtonPrev" play_id="newtonPlay" pause_id="newtonPause" next_iter_id="newtonNext"}}
+
                 </div>
             </div>
         </div>
@@ -121,9 +119,13 @@
 
 <template name="chartControl">
     <div class="btn-group">
-    	<button id= '{{previous_iter_id}}' type="button" class="btn btn-primary"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span></button>
-        <button id= '{{play_id}}' type="button" class="btn btn-primary"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></button>
-        <button id= '{{pause_id}}' type="button" class="btn btn-primary"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span></button>
-        <button id= '{{next_iter_id}}' type="button" class="btn btn-primary"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span></button>
+        <button id='{{previous_iter_id}}' type="button" class="btn btn-primary"><span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+        </button>
+        <button id='{{play_id}}' type="button" class="btn btn-primary"><span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+        </button>
+        <button id='{{pause_id}}' type="button" class="btn btn-primary"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+        </button>
+        <button id='{{next_iter_id}}' type="button" class="btn btn-primary"><span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+        </button>
     </div>
 </template>
